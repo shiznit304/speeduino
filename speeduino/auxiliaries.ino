@@ -160,7 +160,8 @@ void boostControl()
     if(configPage4.boostType == OPEN_LOOP_BOOST)
     {
       //Open loop
-      currentStatus.boostDuty = get3DTableValue(&boostTable, currentStatus.TPS, currentStatus.RPM) * 2 * 100;
+      if(configPage6.boostLoadSource == BOOST_LOAD_TPS) { currentStatus.boostDuty = get3DTableValue(&boostTable, currentStatus.TPS, currentStatus.RPM) * 2 * 100; }
+      else { currentStatus.boostDuty = get3DTableValue(&boostTable, currentStatus.MAP, currentStatus.RPM) * 2 * 100; }
 
       if(currentStatus.boostDuty > 10000) { currentStatus.boostDuty = 10000; } //Safety check
       if(currentStatus.boostDuty == 0) { DISABLE_BOOST_TIMER(); BOOST_PIN_LOW(); } //If boost duty is 0, shut everything down
@@ -172,7 +173,11 @@ void boostControl()
     }
     else if (configPage4.boostType == CLOSED_LOOP_BOOST)
     {
-      if( (boostCounter & 7) == 1) { currentStatus.boostTarget = get3DTableValue(&boostTable, currentStatus.TPS, currentStatus.RPM) * 2; } //Boost target table is in kpa and divided by 2
+      if( (boostCounter & 7) == 1) 
+        { 
+            if(configPage6.boostLoadSource == BOOST_LOAD_TPS) { currentStatus.boostDuty = get3DTableValue(&boostTable, currentStatus.TPS, currentStatus.RPM) * 2 * 100; }
+            else { currentStatus.boostDuty = get3DTableValue(&boostTable, currentStatus.MAP, currentStatus.RPM) * 2 * 100; }
+        } //Boost target table is in kpa and divided by 2
       if(currentStatus.MAP >= 100 ) //Only engage boost control above 100kpa. 
       {
         //If flex fuel is enabled, there can be an adder to the boost target based on ethanol content

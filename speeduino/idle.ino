@@ -523,6 +523,7 @@ void idleControl()
         if(PID_computed == true)
         {
           idle_pwm_target_value = idle_pid_target_value>>2; //increased resolution
+		  if(currentStatus.idleUpActive == true) { idle_pwm_target_value += configPage2.idleUpAdder; }  //Add Idle Up amount if active
           if( idle_pwm_target_value == 0 )
           { 
             disableIdle(); 
@@ -531,7 +532,6 @@ void idleControl()
           }
           BIT_SET(currentStatus.spark, BIT_SPARK_IDLE); //Turn the idle control flag on
           currentStatus.idleLoad = ((unsigned long)(idle_pwm_target_value * 100UL) / idle_pwm_max_count);
-          if(currentStatus.idleUpActive == true) { currentStatus.idleDuty += configPage2.idleUpAdder; } //Add Idle Up amount if active
 
         }
         idleCounter++;

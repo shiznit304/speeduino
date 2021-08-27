@@ -305,23 +305,14 @@ void boostControl()
 
 void vvtControl()
 {
-
-  if( (configPage6.vvtEnabled == 1) 
-  && (currentStatus.coolant >= (int)(configPage4.vvtMinClt - CALIBRATION_TEMPERATURE_OFFSET))
-  && (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) 
-  //&& ((currentStatus.TPS/2) > 10)
-  )
+  if( (configPage6.vvtEnabled == 1) && (currentStatus.coolant >= (int)(configPage4.vvtMinClt - CALIBRATION_TEMPERATURE_OFFSET)) && (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)))
   {
-    //currentStatus.vvt2Duty = runSecsX10;
     if (vvtTimeHold==false) 
       {
         vvtTime = runSecsX10;
         vvtTimeHold=true;
       }
-    if (((runSecsX10 - vvtTime) >= (configPage4.vvtDelay * 50))
-    || (vvtHot==true)
-    ) 
-    {
+    if (((runSecsX10 - vvtTime) >= (configPage4.vvtDelay * 50)) || (vvtHot==true)) {
     vvtHot=true;
     //currentStatus.vvt1Duty = 0;
     //Calculate the current cam angle

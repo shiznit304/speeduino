@@ -8,7 +8,6 @@ A full copy of the license may be found in the projects root directory
 #include "maths.h"
 #include "src/PID_v1/PID_v1.h"
 #include "decoders.h"
-#include "timers.h"
 
 uint16_t vvtTime;
 bool vvtHot;
@@ -313,7 +312,7 @@ void vvtControl()
   && ((currentStatus.TPS/2) > 10)
   )
   {
-    currentStatus.vvt2Duty= (runSecsX10);
+    currentStatus.vvt2Duty = runSecsX10;
     if (vvtTimeHold==false) 
       {
         vvtTime = runSecsX10;

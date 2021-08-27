@@ -311,7 +311,8 @@ void vvtControl()
         vvtTime = runSecsX10;
         vvtTimeHold=true;
       }
-    if (((runSecsX10 - vvtTime) > (configPage4.vvtDelay * 5)) || (vvtHot==true)) {
+    if (((runSecsX10 - vvtTime) > (configPage4.vvtDelay * 5)) || (vvtHot==true)) 
+    {
     vvtHot=true;
     //currentStatus.vvt1Duty = 0;
     //Calculate the current cam angle

@@ -305,7 +305,8 @@ void vvtControl()
   bool vvtTimeHold;
   bool vvtHot = true;
   if( (configPage6.vvtEnabled == 1) && (currentStatus.coolant >= (int)(configPage4.vvtMinClt - CALIBRATION_TEMPERATURE_OFFSET))
-  && (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) 
+  //&& (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) 
+  && ((currentStatus.TPS/2) > 20)
   )
   //{
     

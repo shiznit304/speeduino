@@ -308,8 +308,8 @@ void vvtControl()
 
   if( (configPage6.vvtEnabled == 1) 
   && (currentStatus.coolant >= (int)(configPage4.vvtMinClt - CALIBRATION_TEMPERATURE_OFFSET))
-  //&& (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) 
-  && ((currentStatus.TPS/2) > 10)
+  && (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) 
+  //&& ((currentStatus.TPS/2) > 10)
   )
   {
     currentStatus.vvt2Duty = runSecsX10;
@@ -319,7 +319,7 @@ void vvtControl()
         vvtTimeHold=true;
       }
     if (((runSecsX10 - vvtTime) >= (configPage4.vvtDelay * 50))
-    //|| (vvtHot==true)
+    || (vvtHot==true)
     ) 
     {
     vvtHot=true;

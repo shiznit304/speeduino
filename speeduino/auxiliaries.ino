@@ -9,7 +9,7 @@ A full copy of the license may be found in the projects root directory
 #include "src/PID_v1/PID_v1.h"
 #include "decoders.h"
 
-uint16_t vvtTime;
+uint32_t vvtTime;
 bool vvtHot;
 bool vvtTimeHold;
 //Old PID method. Retained incase the new one has issues
@@ -318,7 +318,7 @@ void vvtControl()
         vvtTime = runSecsX10;
         vvtTimeHold=true;
       }
-    if (((runSecsX10 - vvtTime) >= (configPage4.vvtDelay * 1))
+    if (((runSecsX10 - vvtTime) >= (configPage4.vvtDelay * 50))
     //|| (vvtHot==true)
     ) 
     {

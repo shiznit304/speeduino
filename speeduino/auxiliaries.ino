@@ -300,7 +300,11 @@ void boostControl()
 
 void vvtControl()
 {
-  if( (configPage6.vvtEnabled == 1) && (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) )
+  Serial.println((String)"vvtTime"+vvtTime);
+  Serial.println((String)"vvtHot"+vvtHot);
+  Serial.println((String)"vvtTimeHold"+vvtTimeHold);
+  if( (configPage6.vvtEnabled == 1) && (currentStatus.TPS/2 >= configPage2.idleUpRPMAdder))
+   //&& (BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN)) 
   {
     //currentStatus.vvt1Duty = 0;
     //Calculate the current cam angle

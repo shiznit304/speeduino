@@ -84,5 +84,8 @@ long vvt2_pid_current_angle;
 void boostInterrupt();
 void vvtInterrupt();
 
+uint16_t vvtTime;
+bool vvtHot;
+bool vvtTimeHold;
 
 #endif

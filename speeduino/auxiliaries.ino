@@ -312,7 +312,7 @@ void vvtControl()
   //&& ((currentStatus.TPS/2) > 10)
   )
   {
-    currentStatus.vvt2Duty = runSecsX10;
+    //currentStatus.vvt2Duty = runSecsX10;
     if (vvtTimeHold==false) 
       {
         vvtTime = runSecsX10;

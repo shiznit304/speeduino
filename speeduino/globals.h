@@ -1389,7 +1389,8 @@ struct config13 {
   struct cmpOperation operation[8]; ///< I/O variable comparison operations (See @ref cmpOperation)
 
   uint16_t candID[8]; ///< Actual CAN ID need 16bits, this is a placeholder
-  int8_t iacBatRates[6];
+  byte iacBatRates[3];
+  byte iacBrvBins[3];
   byte unused12_112_115[4];
 
   byte onboard_log_csv_separator :2;  //";", ",", "tab", "space"  

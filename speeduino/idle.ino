@@ -76,9 +76,9 @@ void initialiseIdle()
 
       iacVCorrectionTable.valueSize = SIZE_BYTE;
       iacVCorrectionTable.axisSize = SIZE_BYTE; 
-      iacVCorrectionTable.xSize = 6;
+      iacVCorrectionTable.xSize = 3;
       iacVCorrectionTable.values = configPage13.iacBatRates;
-      iacVCorrectionTable.axisX = configPage6.voltageCorrectionBins;      
+      iacVCorrectionTable.axisX = configPage13.iacBrvBins;      
 
       #if defined(CORE_AVR)
         idle_pwm_max_count = 1000000L / (16 * configPage6.idleFreq * 2); //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
@@ -551,7 +551,7 @@ void idleControl()
         if( BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) )
         {
           //Currently cranking. Use the cranking table
-          idleStepper.targetIdleStep = table2D_getValue(&iacCrankStepsTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3; //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
+          idleStepper.targetIdleStep = (table2D_getValue(&iacCrankStepsTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10)) * 3; //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
           if(currentStatus.idleUpActive == true) { idleStepper.targetIdleStep += configPage2.idleUpAdder; } //Add Idle Up amount if active
 
           //limit to the configured max steps. This must include any idle up adder, to prevent over-opening.
@@ -579,7 +579,7 @@ void idleControl()
             else
             {
               //Standard running
-              idleStepper.targetIdleStep = table2D_getValue(&iacStepTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3; //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
+              idleStepper.targetIdleStep = (table2D_getValue(&iacStepTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10)) * 3; //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
             }
             if(currentStatus.idleUpActive == true) { idleStepper.targetIdleStep += configPage2.idleUpAdder; } //Add Idle Up amount if active
             iacStepTime_uS = configPage6.iacStepTime * 1000;

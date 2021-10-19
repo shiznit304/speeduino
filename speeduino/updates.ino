@@ -504,6 +504,7 @@ void doUpdates()
     configPage13.outputTimeLimit[5] = 0;
     configPage13.outputTimeLimit[6] = 0;
     configPage13.outputTimeLimit[7] = 0;
+    configPage2.injOpen *= 10; //injector open time resolution increased from 10 to 1us
 
     writeAllConfig();
     storeEEPROMVersion(18);

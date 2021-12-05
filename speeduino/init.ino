@@ -318,7 +318,6 @@ void initialiseAll()
     initialiseCorrections();
     BIT_CLEAR(currentStatus.engineProtectStatus, PROTECT_IO_ERROR); //Clear the I/O error bit. The bit will be set in initialiseADC() if there is problem in there.
     initialiseADC();
-    initialiseProgrammableIO();
 
     //Lookup the current MAP reading for barometric pressure
     instanteneousMAPReading();
@@ -363,7 +362,7 @@ void initialiseAll()
 
     //Once the configs have been loaded, a number of one time calculations can be completed
     req_fuel_uS = configPage2.reqFuel * 100; //Convert to uS and an int. This is the only variable to be used in calculations
-    inj_opentime_uS = configPage2.injOpen * 100; //Injector open time. Comes through as ms*10 (Eg 15.5ms = 155).
+    inj_opentime_uS = configPage2.injOpen * 10; //Injector open time. Comes through as ms*10 (Eg 15.5ms = 155).
 
     if(configPage10.stagingEnabled == true)
     {
@@ -1193,6 +1192,7 @@ void initialiseAll()
     }
     else { fpPrimed = true; } //If the user has set 0 for the pump priming, immediately mark the priming as being completed
 
+    initialiseProgrammableIO();
     interrupts();
     readCLT(false); // Need to read coolant temp to make priming pulsewidth work correctly. The false here disables use of the filter
     readTPS(false); // Need to read tps to detect flood clear state

@@ -166,6 +166,7 @@ byte getTSLogEntry(uint16_t byteNum)
     case 118: statusValue = currentStatus.TS_SD_Status; break; //SD card status
     case 119: statusValue = lowByte(currentStatus.EMAP); break; //2 bytes for EMAP
     case 120: statusValue = highByte(currentStatus.EMAP); break;
+    case 121: statusValue = currentStatus.fanDuty; break;
   }
 
   return statusValue;
@@ -175,7 +176,7 @@ byte getTSLogEntry(uint16_t byteNum)
 }
 
 /** 
- * Similar to the @getTSLogEntry function, however this returns a full, unadjusted (ie human readable) log entry value. 
+ * Similar to the @ref getTSLogEntry function, however this returns a full, unadjusted (ie human readable) log entry value.
  * See logger.h for the field names and order
  * @param logIndex - The log index required. Note that this is NOT the byte number, but the index in the log
  * @return Raw, unadjusted value of the log entry. No offset or multiply is applied like it is with the TS log
@@ -289,6 +290,7 @@ int16_t getReadableLogEntry(uint16_t logIndex)
     case 85: statusValue = currentStatus.advance2; break; //advance 2 (%)
     case 86: statusValue = currentStatus.TS_SD_Status; break; //SD card status
     case 87: statusValue = currentStatus.EMAP; break;
+    case 88: statusValue = currentStatus.fanDuty; break;
   }
 
   return statusValue;

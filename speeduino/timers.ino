@@ -24,6 +24,22 @@ Timers are typically low resolution (Compared to Schedulers), with maximum frequ
   #include <avr/wdt.h>
 #endif
 
+// Define a set of terminal counts which are prime numbers, to avoid multiple hitting on the same loop,
+// which should lead to less jitter.  The absolute frequencies of these are not very important.
+// The values are millisecond periods
+#define TC_30_HZ      31
+#define TC_15_HZ      67
+#define TC_10_HZ     101
+#define TC_4_HZ      251
+#define TC_1_HZ     1001
+#define MS_PER_SEC  1000
+
+ //Preload timer2 with 131: accommodates ISR call latency (1) and gives a 1ms period.  Timer runs at 125 kHz.
+#define TCNT2_TC          255
+#define TCNT2_TICKS_1MS   125
+#define ISR_LATENCY         1
+#define TCNT2_PRELOAD     (TCNT2_TC - TCNT2_TICKS_1MS + ISR_LATENCY)
+
 void initialiseTimers()
 {
   lastRPM_100ms = 0;
@@ -43,6 +59,11 @@ ISR(TIMER2_OVF_vect, ISR_NOBLOCK) //This MUST be no block. Turning NO_BLOCK off 
 void oneMSInterval() //Most ARM chips can simply call a function
 #endif
 {
+#if defined(CORE_AVR) //AVR chips use the ISR for this
+    //Reset Timer2 to trigger in another ~1ms
+    TCNT2 = TCNT2_PRELOAD; 
+#endif
+  
   ms_counter++;
 
   //Increment Loop Counters
@@ -68,8 +89,30 @@ void oneMSInterval() //Most ARM chips can simply call a function
   if(ignitionSchedule7.Status == RUNNING) { if( (ignitionSchedule7.startTime < targetOverdwellTime) && (configPage4.useDwellLim) && (isCrankLocked != true) ) { ign7EndFunction(); ignitionSchedule7.Status = OFF; } }
   if(ignitionSchedule8.Status == RUNNING) { if( (ignitionSchedule8.startTime < targetOverdwellTime) && (configPage4.useDwellLim) && (isCrankLocked != true) ) { ign8EndFunction(); ignitionSchedule8.Status = OFF; } }
 
-  //Tacho output check
-  //Tacho is flagged as being ready for a pulse by the ignition outputs. 
+  // Tacho output calculations.  
+  
+  // See if we're in power-on sweep mode
+  if( tachoSweepEnabled )
+  {
+    if( (currentStatus.engine != 0) || (ms_counter >= TACHO_SWEEP_TIME_MS) )  { tachoSweepEnabled = false; }  // Stop the sweep after SWEEP_TIME, or if real tach signals have started
+    else 
+    {
+      // Ramp the needle smoothly to the max over the SWEEP_TIME
+      if( ms_counter < TACHO_SWEEP_RAMP_MS )
+        tachoSweepAccum += map(ms_counter, 0, TACHO_SWEEP_RAMP_MS, 0, tachoSweepIncr);
+      else
+        tachoSweepAccum += tachoSweepIncr;
+             
+      // Each time it rolls over, it's time to pulse the Tach
+      if( tachoSweepAccum >= MS_PER_SEC ) 
+      {  
+        tachoOutputFlag = READY;
+        tachoSweepAccum -= MS_PER_SEC;
+      }
+    }
+  }
+
+  //Tacho is flagged as being ready for a pulse by the ignition outputs, or the sweep interval upon startup
   if(tachoOutputFlag == READY)
   {
     //Check for half speed tacho
@@ -95,27 +138,24 @@ void oneMSInterval() //Most ARM chips can simply call a function
       TACHO_PULSE_HIGH();
       tachoOutputFlag = DEACTIVE;
     }
-  }
-  // Tacho sweep
-  
-
+  }  
 
   //30Hz loop
-  if (loop33ms == 33)
+  if (loop33ms == TC_30_HZ)
   {
     loop33ms = 0;
     BIT_SET(TIMER_mask, BIT_TIMER_30HZ);
   }
 
   //15Hz loop
-  if (loop66ms == 66)
+  if (loop66ms == TC_15_HZ)
   {
     loop66ms = 0;
     BIT_SET(TIMER_mask, BIT_TIMER_15HZ);
   }
 
   //10Hz loop
-  if (loop100ms == 100)
+  if (loop100ms == TC_10_HZ)
   {
     loop100ms = 0; //Reset counter
     BIT_SET(TIMER_mask, BIT_TIMER_10HZ);
@@ -131,7 +171,7 @@ void oneMSInterval() //Most ARM chips can simply call a function
   }
 
   //4Hz loop
-  if (loop250ms == 250)
+  if (loop250ms == TC_4_HZ)
   {
     loop250ms = 0; //Reset Counter
     BIT_SET(TIMER_mask, BIT_TIMER_4HZ);
@@ -150,7 +190,7 @@ void oneMSInterval() //Most ARM chips can simply call a function
   }
 
   //1Hz loop
-  if (loopSec == 1000)
+  if (loopSec == TC_1_HZ)
   {
     loopSec = 0; //Reset counter.
     BIT_SET(TIMER_mask, BIT_TIMER_1HZ);
@@ -265,9 +305,5 @@ void oneMSInterval() //Most ARM chips can simply call a function
     }
 
   }
-#if defined(CORE_AVR) //AVR chips use the ISR for this
-    //Reset Timer2 to trigger in another ~1ms
-    TCNT2 = 131;            //Preload timer2 with 100 cycles, leaving 156 till overflow.
-#endif
 }
 

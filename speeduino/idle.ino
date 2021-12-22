@@ -758,6 +758,11 @@ void idleControl()
       break;
   }
   lastDFCOValue = BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO);
+
+  if (configPage6.rotationalIdleEnable == true && (currentStatus.TPS < configPage2.idleAdvTPS)) {
+    currentStatus.CLIdleTarget = (byte)table2D_getValue(&iacClosedLoopTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees
+    if (currentStatus.RPM > currentStatus.CLIdleTarget) {currentStatus.launchingHard = true;} else {currentStatus.launchingHard = false;}
+  } 
 }
 
 

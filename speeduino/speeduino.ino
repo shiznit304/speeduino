@@ -269,7 +269,13 @@ void loop()
           && antiLagTrigger
           && (currentStatus.RPM > ((currentStatus.antiLagEngagedRPM) + ((unsigned int)configPage10.antiLagRPMWindow * 10)))
         )
+        ||
+        (
+          configPage10.rotationalIdleEnable
+          && (currentStatus.TPS < configPage2.idleAdvTPS) 
+          && (currentStatus.RPM > currentStatus.CLIdleTarget) 
         )
+      )
       { 
         //HardCut rev limit for 2-step launch control.
         currentStatus.launchingHard = true; 

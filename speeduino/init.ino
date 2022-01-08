@@ -1914,9 +1914,9 @@ void setPinMapping(byte boardID)
       pinFuelPump = 23; //Fuel pump output
       pinVVT_1 = 11; //Default VVT output
       pinVVT_2 = 48; //Default VVT2 output
-      pinStepperDir = 32; //Direction pin  for DRV8825 driver
-      pinStepperStep = 31; //Step pin for DRV8825 driver
-      pinStepperEnable = 30; //Enable pin for DRV8825 driver
+      //pinStepperDir = 32; //Direction pin  for DRV8825 driver
+      //pinStepperStep = 31; //Step pin for DRV8825 driver
+      //pinStepperEnable = 30; //Enable pin for DRV8825 driver
       pinBoost = 12; //Boost control
       pinSpareLOut1 = 26; //low current output spare1
       pinSpareLOut2 = 27; //low current output spare2

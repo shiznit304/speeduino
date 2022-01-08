@@ -1045,7 +1045,7 @@ struct config6 {
   byte useExtBaro : 1;
   byte boostMode : 1; /// Boost control mode: 0=Simple (BOOST_MODE_SIMPLE) or 1=full (BOOST_MODE_FULL)
   byte boostPin : 6;
-  byte unused_bit : 1; //Previously was VVTasOnOff 
+  byte vssPullup : 1; //Previously was VVTasOnOff 
   byte useEMAP : 1;    ///< Enable EMAP
   byte voltageCorrectionBins[6]; //X axis bins for voltage correction tables
   byte injVoltageCorrectionValues[6]; //Correction table for injector PW vs battery voltage
@@ -1102,7 +1102,7 @@ struct config6 {
   byte iacStepHyster; //Hysteresis temperature (*10). Eg 2.2C = 22
 
   byte fanInv : 1;        // Fan output inversion bit
-  byte fanUnused : 1;
+  byte vssEdge : 1;
   byte fanPin : 6;
   byte fanSP;             // Cooling fan start temperature
   byte fanHyster;         // Fan hysteresis

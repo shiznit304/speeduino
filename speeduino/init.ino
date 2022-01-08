@@ -316,7 +316,8 @@ void initialiseAll()
     //Same as above, but for the VSS input
     if(configPage2.vssMode > 1) // VSS modes 2 and 3 are interrupt drive (Mode 1 is CAN)
     {
-      attachInterrupt(digitalPinToInterrupt(pinVSS), vssPulse, RISING);
+      if (configPage6.vssEdge == 0) {attachInterrupt(digitalPinToInterrupt(pinVSS), vssPulse, RISING);}
+      else {attachInterrupt(digitalPinToInterrupt(pinVSS), vssPulse, FALLING);}
     }
 
     //Once the configs have been loaded, a number of one time calculations can be completed
@@ -2683,7 +2684,8 @@ void setPinMapping(byte boardID)
   }
   if( (configPage2.vssMode > 1) && (!pinIsOutput(pinVSS)) ) //Pin mode 1 for VSS is CAN
   {
-    pinMode(pinVSS, INPUT);
+    if (configPage6.vssPullup == true) {pinMode(pinVSS, INPUT_PULLUP);}
+    else {pinMode(pinVSS, INPUT);}
   }
   if( (configPage6.launchEnabled > 0) && (!pinIsOutput(pinLaunch)) )
   {

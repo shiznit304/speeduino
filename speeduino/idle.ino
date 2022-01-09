@@ -503,14 +503,12 @@ void idleControl()
           //Tapering between cranking IAC value and running
           currentStatus.idleDuty = map(runSecsX10, 0, configPage2.idleTaperTime,\
           table2D_getValue(&iacCrankDutyTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET),\
-          table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10);
-          table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET);
+          table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10));
         }
         else
         {
           //Standard running
-          currentStatus.idleDuty = table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10); //All temps are offset by 40 degrees
-          table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET); 
+          currentStatus.idleDuty = table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10); //All temps are offset by 40 degrees
         }
       }
 

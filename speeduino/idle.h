@@ -40,6 +40,7 @@ struct table2D iacStepTable;
 //Open loop tables specifically for cranking
 struct table2D iacCrankStepsTable;
 struct table2D iacCrankDutyTable;
+struct table2D iacVCorrectionTable;
 
 struct StepperIdle idleStepper;
 bool idleOn; //Simply tracks whether idle was on last time around

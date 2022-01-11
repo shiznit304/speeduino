@@ -79,6 +79,12 @@ void initialiseIdle()
       iacCrankDutyTable.values = configPage6.iacCrankDuty;
       iacCrankDutyTable.axisX = configPage6.iacCrankBins;
 
+      iacVCorrectionTable.valueSize = SIZE_BYTE;
+      iacVCorrectionTable.axisSize = SIZE_BYTE; 
+      iacVCorrectionTable.xSize = 3;
+      iacVCorrectionTable.values = configPage13.iacBatRates;
+      iacVCorrectionTable.axisX = configPage13.iacBrvBins;      
+
       #if defined(CORE_AVR)
         idle_pwm_max_count = 1000000L / (16 * configPage6.idleFreq * 2); //Converts the frequency in Hz to the number of ticks (at 16uS) it takes to complete 1 cycle. Note that the frequency is divided by 2 coming from TS to allow for up to 512hz
       #elif defined(CORE_TEENSY35)
@@ -479,14 +485,14 @@ void idleControl()
       if( BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) )
       {
         //Currently cranking. Use the cranking table
-        currentStatus.idleDuty = table2D_getValue(&iacCrankDutyTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees
+        currentStatus.idleDuty = table2D_getValue(&iacCrankDutyTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10); //All temps are offset by 40 degrees
       }
       else if ( !BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN))
       {
         if( configPage6.iacPWMrun == true)
         {
           //Engine is not running or cranking, but the run before crank flag is set. Use the cranking table
-          currentStatus.idleDuty = table2D_getValue(&iacCrankDutyTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees
+          currentStatus.idleDuty = table2D_getValue(&iacCrankDutyTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10); //All temps are offset by 40 degrees
         }
       }
       else
@@ -497,12 +503,12 @@ void idleControl()
           //Tapering between cranking IAC value and running
           currentStatus.idleDuty = map(runSecsX10, 0, configPage2.idleTaperTime,\
           table2D_getValue(&iacCrankDutyTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET),\
-          table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET));
+          table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10) + table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET));
         }
         else
         {
           //Standard running
-          currentStatus.idleDuty = table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees 
+          currentStatus.idleDuty = table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10) + table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees 
         }
       }
 
@@ -624,7 +630,7 @@ void idleControl()
         if( !BIT_CHECK(currentStatus.engine, BIT_ENGINE_RUN) ) //If ain't running it means off or cranking
         {
           //Currently cranking. Use the cranking table
-          idleStepper.targetIdleStep = table2D_getValue(&iacCrankStepsTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3; //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
+          idleStepper.targetIdleStep = (table2D_getValue(&iacCrankStepsTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10)) * 3; //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
           if(currentStatus.idleUpActive == true) { idleStepper.targetIdleStep += configPage2.idleUpAdder; } //Add Idle Up amount if active
 
           //limit to the configured max steps. This must include any idle up adder, to prevent over-opening.
@@ -650,7 +656,7 @@ void idleControl()
             else
             {
               //Standard running
-              idleStepper.targetIdleStep = table2D_getValue(&iacStepTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) * 3; //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
+              idleStepper.targetIdleStep = (table2D_getValue(&iacStepTable, (currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET)) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10)) * 3; //All temps are offset by 40 degrees. Step counts are divided by 3 in TS. Multiply back out here
             }
             if(currentStatus.idleUpActive == true) { idleStepper.targetIdleStep += configPage2.idleUpAdder; } //Add Idle Up amount if active
             iacStepTime_uS = configPage6.iacStepTime * 1000;

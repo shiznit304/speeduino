@@ -534,16 +534,16 @@ void triggerSec_missingTooth()
   } //Trigger filter
 
   //Record the VVT Angle
-  if( (configPage6.vvtEnabled > 0) && (revolutionOne == 1) )
-  {
-    int16_t curAngle;
-    curAngle = getCrankAngle();
-    while(curAngle > 360) { curAngle -= 360; }
-    curAngle -= configPage4.triggerAngle; //Value at TDC
-    if( configPage6.vvtMode == VVT_MODE_CLOSED_LOOP ) { curAngle -= configPage10.vvtCL0DutyAng; }
-
-    currentStatus.vvt1Angle = ANGLE_FILTER( (curAngle << 1), configPage4.ANGLEFILTER_VVT, currentStatus.vvt1Angle);
-  }
+  //if( (configPage6.vvtEnabled > 0) && (revolutionOne == 1) )
+  //{
+  //  int16_t curAngle;
+  //  curAngle = getCrankAngle();
+  //  while(curAngle > 360) { curAngle -= 360; }
+  //  curAngle -= configPage4.triggerAngle; //Value at TDC
+  //  if( configPage6.vvtMode == VVT_MODE_CLOSED_LOOP ) { curAngle -= configPage10.vvtCL0DutyAng; }
+  //
+  //  currentStatus.vvt1Angle = ANGLE_FILTER( (curAngle << 1), configPage4.ANGLEFILTER_VVT, currentStatus.vvt1Angle);
+  //}
 }
 
 void triggerThird_missingTooth()

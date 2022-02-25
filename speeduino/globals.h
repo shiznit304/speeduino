@@ -876,8 +876,8 @@ struct config2 {
   byte injAngRPM[4];
 
   byte idleTaperTime;
-  byte dfcoDelay;
-  byte dfcoMinCLT;
+  byte dfcoStartDelay; // Delay time before DFCO starts ramping in
+  byte dfcoMinCLT; // Minimum coolant temperature for DFCO
 
   //VSS Stuff
   byte vssMode : 2; ///< VSS (Vehicle speed sensor) mode (0=none, 1=CANbus, 2,3=Interrupt driven)
@@ -1166,14 +1166,29 @@ struct config9 {
   byte boostByGear6;
 
   byte PWMFanDuty[4];
-  byte coolantProtEnbl : 1;
-  byte coolantProtRPM[6];
-  byte coolantProtTemp[6];
+
+  byte unused10_166;
+  byte unused10_167;
+  byte unused10_168;
+  byte dfcoAdv; // Spark advance for DFCO entry and exit
+  byte dfcoRampOutTime; // Delay time to ramp spark and apply enrichment on DFCO exit
+  byte dfcoExitFuel; // Fuel enrichment on DFCO exit.
+  byte dfcoRampInTime; // time to ramp spark on DFCO entry
+  byte dfcoMinVss; //Min vehicle speed for DFCO
+  byte dfcoEnblGear1: 1; //DFCO Enable Per Gear
+  byte dfcoEnblGear2: 1; //DFCO Enable Per Gear
+  byte dfcoEnblGear3: 1; //DFCO Enable Per Gear
+  byte dfcoEnblGear4: 1; //DFCO Enable Per Gear
+  byte dfcoEnblGear5: 1; //DFCO Enable Per Gear
+  byte dfcoEnblGear6: 1; //DFCO Enable Per Gear
+  byte dfcoDsblwClutch: 1; //DFCO Disable when clutch pressed (Launch Input)
+  byte dfcoExitFuelTime: 1; // Selects if short (two engine cycles) or long (dfcoRampInTime) for dfcoExitFuel;
+
+
+  byte coolantProtEnbl : 1; //byte 175
+  byte coolantProtRPM[3];
+  byte coolantProtTemp[3];
   byte iacOLPWMIATVal [9]; //Open loop IAT duty values for PMW valves
-  byte unused10_188;
-  byte unused10_189;
-  byte unused10_190;
-  byte unused10_191;
   
 #if defined(CORE_AVR)
   };

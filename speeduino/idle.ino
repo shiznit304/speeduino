@@ -471,7 +471,7 @@ void idleControl()
           //Tapering between cranking IAC value and running
           currentStatus.idleLoad = map(idleTaper, 0, configPage2.idleTaperTime,\
           table2D_getValue(&iacCrankDutyTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET),\
-          table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10);
+          table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10));
           if( BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ) ) { idleTaper++; }
         }
         else

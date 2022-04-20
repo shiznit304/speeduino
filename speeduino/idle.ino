@@ -67,6 +67,11 @@ void initialiseIdle()
       iacPWMTable.values = configPage6.iacOLPWMVal;
       iacPWMTable.axisX = configPage6.iacBins;
 
+      iacPWMIATTable.xSize = 9;
+      iacPWMIATTable.valueSize = SIZE_BYTE;
+      iacPWMIATTable.axisSize = SIZE_BYTE;
+      iacPWMIATTable.values = configPage9.iacOLPWMIATVal;
+      iacPWMIATTable.axisX = configPage6.airDenBins;
 
       iacCrankDutyTable.xSize = 4;
       iacCrankDutyTable.valueSize = SIZE_BYTE;
@@ -97,6 +102,12 @@ void initialiseIdle()
       iacPWMTable.axisSize = SIZE_BYTE;
       iacPWMTable.values = configPage6.iacOLPWMVal;
       iacPWMTable.axisX = configPage6.iacBins;
+
+      iacPWMIATTable.xSize = 9;
+      iacPWMIATTable.valueSize = SIZE_BYTE;
+      iacPWMIATTable.axisSize = SIZE_BYTE;
+      iacPWMIATTable.values = configPage9.iacOLPWMIATVal;
+      iacPWMIATTable.axisX = configPage6.airDenBins;
 
       iacCrankDutyTable.xSize = 4;
       iacCrankDutyTable.valueSize = SIZE_BYTE;
@@ -472,13 +483,13 @@ void idleControl()
           //Tapering between cranking IAC value and running
           currentStatus.idleLoad = map(idleTaper, 0, configPage2.idleTaperTime,\
           table2D_getValue(&iacCrankDutyTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET),\
-          table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10));
+          table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10));
           if( BIT_CHECK(LOOP_TIMER, BIT_TIMER_10HZ) ) { idleTaper++; }
         }
         else
         {
           //Standard running
-          currentStatus.idleLoad = table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10); //All temps are offset by 40 degrees
+          currentStatus.idleLoad = table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacVCorrectionTable, currentStatus.battery10); //All temps are offset by 40 degrees
         }
       }
 
@@ -553,7 +564,7 @@ void idleControl()
       else
       {
         //Read the OL table as feedforward term
-        FeedForwardTerm = percentage(table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET), idle_pwm_max_count<<2); //All temps are offset by 40 degrees
+        FeedForwardTerm = percentage(table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET), idle_pwm_max_count<<2); //All temps are offset by 40 degrees
     
         if(currentStatus.idleUpActive == true) { currentStatus.CLIdleTarget += configPage2.idleUpRPMAdder;  } //Add Idle Up RPM amount if active
         if(currentStatus.idleUpActive2 == true) { currentStatus.CLIdleTarget += (configPage2.idleUpRPMAdder2 * 2);  } //Adds Idle Up RPM amount if active

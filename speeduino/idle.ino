@@ -401,7 +401,8 @@ void idleControl()
   {
     if (configPage2.idleUpPolarity == 0) { currentStatus.idleUpActive = !digitalRead(pinIdleUp); } //Normal mode (ground switched)
     else { currentStatus.idleUpActive = digitalRead(pinIdleUp); } //Inverted mode (5v activates idleUp)
-
+    currentStatus.idleUpActive2 = digitalRead(pinIdleUp2); // miata neutral sw
+    currentStatus.idleUpActive3 = !digitalRead(pinIdleUp3); // miata psp sw
     if (configPage2.idleUpOutputEnabled  == true)
     {
       if (currentStatus.idleUpActive == true)
@@ -476,6 +477,9 @@ void idleControl()
       }
 
       if(currentStatus.idleUpActive == true) { currentStatus.idleLoad += configPage2.idleUpAdder; } //Add Idle Up amount if active
+      if(currentStatus.idleUpActive == true) { currentStatus.idleLoad += configPage2.idleUpAdder; } //Add Idle Up amount if active
+      if(currentStatus.idleUpActive2 == true) { currentStatus.idleLoad += (configPage2.idleUpAdder2 * 2); } //Add Idle Up amount if active
+      if(currentStatus.idleUpActive3 == true) { currentStatus.idleLoad += (configPage2.idleUpAdder3 * 2); } //Add Idle Up amount if active
       if( currentStatus.idleLoad > 100 ) { currentStatus.idleLoad = 100; } //Safety Check
       idle_pwm_target_value = percentage(currentStatus.idleLoad, idle_pwm_max_count);
       
@@ -502,6 +506,9 @@ void idleControl()
       }
       else
       {
+        if(currentStatus.idleUpActive == true) { currentStatus.CLIdleTarget += configPage2.idleUpRPMAdder;  } //Add Idle Up RPM amount if active
+        if(currentStatus.idleUpActive2 == true) { currentStatus.CLIdleTarget += (configPage2.idleUpRPMAdder2 * 2);  } //Adds Idle Up RPM amount if active
+        if(currentStatus.idleUpActive3 == true) { currentStatus.CLIdleTarget += (configPage2.idleUpRPMAdder3 * 2);  } //Adds Idle Up RPM amount if active
         idle_cl_target_rpm = (uint16_t)currentStatus.CLIdleTarget * 10; //Multiply the byte target value back out by 10
         if( (idleCounter & 31) == 1) { idlePID.SetTunings(configPage6.idleKP, configPage6.idleKI, configPage6.idleKD); } //This only needs to be run very infrequently, once every 32 calls to idleControl(). This is approx. once per second
 
@@ -542,6 +549,9 @@ void idleControl()
         //Read the OL table as feedforward term
         FeedForwardTerm = percentage(table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET), idle_pwm_max_count<<2); //All temps are offset by 40 degrees
     
+        if(currentStatus.idleUpActive == true) { currentStatus.CLIdleTarget += configPage2.idleUpRPMAdder;  } //Add Idle Up RPM amount if active
+        if(currentStatus.idleUpActive2 == true) { currentStatus.CLIdleTarget += (configPage2.idleUpRPMAdder2 * 2);  } //Adds Idle Up RPM amount if active
+        if(currentStatus.idleUpActive3 == true) { currentStatus.CLIdleTarget += (configPage2.idleUpRPMAdder3 * 2);  } //Adds Idle Up RPM amount if active
         idle_cl_target_rpm = (uint16_t)currentStatus.CLIdleTarget * 10; //Multiply the byte target value back out by 10
         if( (idleCounter & 31) == 1) { idlePID.SetTunings(configPage6.idleKP, configPage6.idleKI, configPage6.idleKD); } //This only needs to be run very infrequently, once every 32 calls to idleControl(). This is approx. once per 9 seconds
         if((currentStatus.RPM - idle_cl_target_rpm > configPage2.iacRPMlimitHysteresis*10) || (currentStatus.TPS > configPage2.iacTPSlimit)){ //reset integral to zero when TPS is bigger than set value in TS (opening throttle so not idle anymore). OR when RPM higher than Idle Target + RPM Histeresis (comming back from high rpm with throttle closed) 

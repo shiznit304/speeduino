@@ -523,9 +523,6 @@ void idleControl()
       }
       else
       {
-        if(currentStatus.idleUpActive == true) { currentStatus.CLIdleTarget += configPage2.idleUpRPMAdder;  } //Add Idle Up RPM amount if active
-        if(currentStatus.idleUpActive2 == true) { currentStatus.CLIdleTarget += (configPage2.idleUpRPMAdder2 * 2);  } //Adds Idle Up RPM amount if active
-        if(currentStatus.idleUpActive3 == true) { currentStatus.CLIdleTarget += (configPage2.idleUpRPMAdder3 * 2);  } //Adds Idle Up RPM amount if active
         idle_cl_target_rpm = (uint16_t)currentStatus.CLIdleTarget * 10; //Multiply the byte target value back out by 10
         if( BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ) ) { idlePID.SetTunings(configPage6.idleKP, configPage6.idleKI, configPage6.idleKD); } //Re-read the PID settings once per second
 
@@ -564,11 +561,7 @@ void idleControl()
       else
       {
         //Read the OL table as feedforward term
-        FeedForwardTerm = percentage(table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET), idle_pwm_max_count<<2); //All temps are offset by 40 degrees
-    
-        if(currentStatus.idleUpActive == true) { currentStatus.CLIdleTarget += configPage2.idleUpRPMAdder;  } //Add Idle Up RPM amount if active
-        if(currentStatus.idleUpActive2 == true) { currentStatus.CLIdleTarget += (configPage2.idleUpRPMAdder2 * 2);  } //Adds Idle Up RPM amount if active
-        if(currentStatus.idleUpActive3 == true) { currentStatus.CLIdleTarget += (configPage2.idleUpRPMAdder3 * 2);  } //Adds Idle Up RPM amount if active
+        FeedForwardTerm = percentage(table2D_getValue(&iacPWMTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET) + table2D_getValue(&iacPWMIATTable, currentStatus.IAT + CALIBRATION_TEMPERATURE_OFFSET), idle_pwm_max_count<<2); //All temps are offset by 40 degrees    
         idle_cl_target_rpm = (uint16_t)currentStatus.CLIdleTarget * 10; //Multiply the byte target value back out by 10
         if( BIT_CHECK(LOOP_TIMER, BIT_TIMER_1HZ) ) { idlePID.SetTunings(configPage6.idleKP, configPage6.idleKI, configPage6.idleKD); } //Re-read the PID settings once per second
         if((currentStatus.RPM - idle_cl_target_rpm > configPage2.iacRPMlimitHysteresis*10) || (currentStatus.TPS > configPage2.iacTPSlimit)){ //reset integral to zero when TPS is bigger than set value in TS (opening throttle so not idle anymore). OR when RPM higher than Idle Target + RPM Histeresis (comming back from high rpm with throttle closed) 

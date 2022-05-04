@@ -294,6 +294,9 @@ void loop()
       //updateFullStatus();
       checkProgrammableIO();
       idleControl(); //Perform any idle related actions. This needs to be run at 10Hz to align with the idle taper resolution of 0.1s
+      
+      // Air conditioning control
+      airConControl();
 
       //if( (isEepromWritePending() == true) && (serialReceivePending == false) && (micros() > deferEEPROMWritesUntil)) { writeAllConfig(); } //Used for slower EEPROM writes (Currently this runs in the 30Hz block)
       
@@ -347,6 +350,7 @@ void loop()
         if(currentStatus.idleUpActive2 == true) { currentStatus.CLIdleTarget += (configPage2.idleUpRPMAdder2 * 2);  } //Adds Idle Up RPM amount if active
         if(currentStatus.idleUpActive3 == true) { currentStatus.CLIdleTarget += (configPage2.idleUpRPMAdder3 * 2);  } //Adds Idle Up RPM amount if active
 
+        if(BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON)) { currentStatus.CLIdleTarget += configPage15.idleUpRPMAdder;  } //Adds Idle Up RPM amount if active
       }
 
       #ifdef SD_LOGGING
@@ -355,7 +359,7 @@ void loop()
       
       currentStatus.fuelPressure = getFuelPressure();
       currentStatus.oilPressure = getOilPressure();
-
+      
       if(auxIsEnabled == true)
       {
         //TODO dazq to clean this right up :)

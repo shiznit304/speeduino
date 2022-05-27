@@ -347,6 +347,9 @@ void loop()
       {
         currentStatus.CLIdleTarget = (byte)table2D_getValue(&idleTargetTable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET); //All temps are offset by 40 degrees
         if(BIT_CHECK(currentStatus.airConStatus, BIT_AIRCON_TURNING_ON)) { currentStatus.CLIdleTarget += configPage15.idleUpRPMAdder;  } //Adds Idle Up RPM amount if active
+        if(currentStatus.idleUpActive2 == true) { currentStatus.CLIdleTarget += (configPage15.idleUpRPMAdder2 * 2);  } //Adds Idle Up RPM amount if active
+        if(currentStatus.idleUpActive3 == true) { currentStatus.CLIdleTarget += (configPage15.idleUpRPMAdder3 * 2);  } //Adds Idle Up RPM amount if active
+      
       }
 
       #ifdef SD_LOGGING

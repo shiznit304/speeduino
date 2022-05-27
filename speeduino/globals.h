@@ -685,6 +685,8 @@ struct statuses {
   byte afrTarget;    /**< Current AFR Target looked up from AFR target table (x10 ? See @ref afrTable)*/
   byte CLIdleTarget; /**< The target idle RPM (when closed loop idle control is active) */
   bool idleUpActive; /**< Whether the externally controlled idle up is currently active */
+  bool idleUpActive2; //miata neutral sw
+  bool idleUpActive3; //miata psp sw
   bool CTPSActive;   /**< Whether the externally controlled closed throttle position sensor is currently active */
   volatile byte ethanolPct; /**< Ethanol reading (if enabled). 0 = No ethanol, 100 = pure ethanol. Eg E85 = 85. */
   volatile int8_t fuelTemp;
@@ -1532,6 +1534,8 @@ extern byte pinFuelPump; //Fuel pump on/off
 extern byte pinIdle1; //Single wire idle control
 extern byte pinIdle2; //2 wire idle control (Not currently used)
 extern byte pinIdleUp; //Input for triggering Idle Up
+extern byte pinIdleUp2; //input for miata neutral switch
+extern byte pinIdleUp3; //input for miata psp switch
 extern byte pinIdleUpOutput; //Output that follows (normal or inverted) the idle up pin
 extern byte pinCTPS; //Input for triggering closed throttle state
 extern byte pinFuel2Input; //Input for switching to the 2nd fuel table

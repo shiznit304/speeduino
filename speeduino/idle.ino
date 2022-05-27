@@ -395,7 +395,8 @@ void idleControl()
 {
   if( idleInitComplete != configPage6.iacAlgorithm) { initialiseIdle(); }
   if( (currentStatus.RPM > 0) || (configPage6.iacPWMrun == true) ) { enableIdle(); }
-
+  currentStatus.idleUpActive2 = digitalRead(pinIdleUp2); // miata neutral sw
+  currentStatus.idleUpActive3 = !digitalRead(pinIdleUp3); // miata psp sw
   //Check whether the idleUp is active
   if (configPage2.idleUpEnabled == true)
   {

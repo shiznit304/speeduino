@@ -2624,6 +2624,8 @@ void setPinMapping(byte boardID)
   //Currently there's no default pin for Idle Up
   
   pinIdleUp = pinTranslate(configPage2.idleUpPin);
+  pinIdleUp2 = pinTranslate(50); //pin D50 miata neutral switch
+  pinIdleUp3 = pinTranslate(53); //pin D53 power steering pump
 
   //Currently there's no default pin for Idle Up Output
   pinIdleUpOutput = pinTranslate(configPage2.idleUpOutputPin);
@@ -2804,7 +2806,10 @@ void setPinMapping(byte boardID)
   {
     if (configPage2.idleUpPolarity == 0) { pinMode(pinIdleUp, INPUT_PULLUP); } //Normal setting
     else { pinMode(pinIdleUp, INPUT); } //inverted setting
+    
   }
+  pinMode(pinIdleUp2, INPUT_PULLUP);
+  pinMode(pinIdleUp3, INPUT_PULLUP);
   if( (configPage2.CTPSEnabled > 0) && (!pinIsOutput(pinCTPS)) )
   {
     if (configPage2.CTPSPolarity == 0) { pinMode(pinCTPS, INPUT_PULLUP); } //Normal setting

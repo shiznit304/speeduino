@@ -621,6 +621,10 @@ void doUpdates()
     configPage2.canBMWCluster = 0;
     configPage2.canVAGCluster = 0;
     
+    //Added configPage15 AC Control
+    //Set A/C default values - these line up with the ini file defaults
+    configPage15.airConEnable = 0;
+    
     writeAllConfig();
     storeEEPROMVersion(20);
   }

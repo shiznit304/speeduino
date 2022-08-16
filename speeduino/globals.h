@@ -1494,14 +1494,15 @@ struct config15 {
   byte airConRPMCutTime;
   byte airConFanPin : 6;
   byte airConUnused4 : 2;
-  byte idleUpRPMAdder;
+  byte airConIdleUpRPMAdder;
   //Bytes 97-255
   byte idleUpAdder2 : 2;
   byte idleUpAdder3 : 2;
   byte idleUpRPMAdder2 : 2;
   byte idleUpRPMAdder3 : 2;
   byte iacOLPWMIATVal [9]; //Open loop IAT duty values for PMW valves
-  byte unused15_107_255[149];
+  byte airConPwmFanMinDuty;
+  byte unused15_107_255[148];
 
 #if defined(CORE_AVR)
   };

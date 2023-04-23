@@ -221,7 +221,7 @@ void loop(void)
         if(configPage6.launchHiLo > 0) { clutchTrigger = digitalRead(pinLaunch); }
         else { clutchTrigger = !digitalRead(pinLaunch); }
       }
-      if (configPage4.antiLagEnable) { antiLagTrigger = !digitalRead(pinAntiLag); }
+      if (configPage9.antiLagEnable) { antiLagTrigger = !digitalRead(pinAntiLag); }
 
       if(previousClutchTrigger != clutchTrigger) { currentStatus.clutchEngagedRPM = currentStatus.RPM; }
       if(previousAntiLagTrigger != antiLagTrigger) { currentStatus.antiLagEngagedRPM = currentStatus.RPM; }
@@ -237,9 +237,9 @@ void loop(void)
         ||
         (
           configPage6.launchEnabled
-          && configPage4.antiLagEnable
+          && configPage9.antiLagEnable
           && antiLagTrigger
-          && (currentStatus.RPM > ((currentStatus.antiLagEngagedRPM) + ((unsigned int)configPage10.antiLagRPMWindow * 10)))
+          && (currentStatus.RPM > ((currentStatus.antiLagEngagedRPM) + ((unsigned int)configPage9.antiLagRPMWindow * 10)))
         )
         )
       { 

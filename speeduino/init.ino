@@ -2753,7 +2753,7 @@ void setPinMapping(byte boardID)
   //Currently there's no default pin for closed throttle position sensor
   pinCTPS = pinTranslate(configPage2.CTPSPin);
 
-  pinAntiLag = pinTranslate(configPage4.antiLagPin);
+  pinAntiLag = pinTranslate(configPage9.antiLagPin);
 
   
   // Air conditioning control initialisation
@@ -2923,7 +2923,7 @@ void setPinMapping(byte boardID)
     else { pinMode(pinLaunch, INPUT); } //If Launch Pull Resistor is not set make input float.
   }
 
-  if( (configPage4.antiLagEnable > 0) && (!pinIsOutput(pinAntiLag)) )
+  if( (configPage9.antiLagEnable > 0) && (!pinIsOutput(pinAntiLag)) )
   {
     pinMode(pinAntiLag, INPUT_PULLUP);
   }

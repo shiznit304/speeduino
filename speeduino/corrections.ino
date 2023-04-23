@@ -868,7 +868,7 @@ int8_t correctionSoftLaunch(int8_t advance)
       ||
       (
         configPage6.launchEnabled
-        && configPage4.antiLagEnable
+        && configPage9.antiLagEnable
         && antiLagTrigger
         && (currentStatus.RPM > currentStatus.antiLagEngagedRPM)
       ) // Anti-lag

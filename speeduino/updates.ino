@@ -521,9 +521,6 @@ void doUpdates(void)
 
   if(readEEPROMVersion() == 18)
   {
-    //202202
-    configPage2.fanEnable = configPage6.fanUnused; // PWM Fan mode added, but take the previous setting of Fan in use.
-
     //TPS resolution increased to 0.5%
     //configPage2.taeThresh *= 2;
     configPage2.idleAdvTPS *= 2;
